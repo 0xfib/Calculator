@@ -17,9 +17,11 @@
 
 
 CCalculatorDlg::CCalculatorDlg(CWnd* pParent /*=NULL*/)
-	: CDialogEx(IDD_CALCULATOR_DIALOG, pParent)
+	: CDialogEx(IDD_CALCULATOR_DIALOG, pParent),
+	SelectedScreenNo(1)
 {
 	m_hIcon = AfxGetApp()->LoadIcon(IDR_MAINFRAME);
+
 
 
 }
@@ -46,6 +48,8 @@ BEGIN_MESSAGE_MAP(CCalculatorDlg, CDialogEx)
 	ON_BN_CLICKED(BUTTON7, &CCalculatorDlg::OnBnClickedButton7)
 	ON_BN_CLICKED(BUTTON8, &CCalculatorDlg::OnBnClickedButton8)
 	ON_BN_CLICKED(BUTTON9, &CCalculatorDlg::OnBnClickedButton9)
+	ON_BN_CLICKED(IDC_RADIO1, &CCalculatorDlg::OnBnClickedRadio1)
+	ON_BN_CLICKED(IDC_RADIO2, &CCalculatorDlg::OnBnClickedRadio2)
 END_MESSAGE_MAP()
 
 
@@ -106,8 +110,14 @@ HCURSOR CCalculatorDlg::OnQueryDragIcon()
 void CCalculatorDlg::InsertScreen(CString in)
 {
 	CString CurrentScreenText;
-	CFirstScreen.GetWindowTextW(CurrentScreenText);
-	CFirstScreen.SetWindowTextW(CurrentScreenText + in);
+	if (SelectedScreenNo == 1) {
+		CFirstScreen.GetWindowTextW(CurrentScreenText);
+		CFirstScreen.SetWindowTextW(CurrentScreenText + in);
+	}
+	else {
+		CSecondScreen.GetWindowTextW(CurrentScreenText);
+		CSecondScreen.SetWindowTextW(CurrentScreenText + in);
+	}
 }
 
 
@@ -115,8 +125,6 @@ void CCalculatorDlg::OnBnClickedButton0()
 {
 	InsertScreen(CString("0"));
 }
-
-
 
 
 void CCalculatorDlg::OnBnClickedButton1()
@@ -170,4 +178,16 @@ void CCalculatorDlg::OnBnClickedButton8()
 void CCalculatorDlg::OnBnClickedButton9()
 {
 	InsertScreen(CString("9"));
+}
+
+
+void CCalculatorDlg::OnBnClickedRadio1()
+{
+	SelectedScreenNo = 1;
+}
+
+
+void CCalculatorDlg::OnBnClickedRadio2()
+{
+	SelectedScreenNo = 2;
 }
