@@ -36,4 +36,5 @@ public:
 	CEdit CSecondScreen;
 	CEdit CFirstScreen;
 	afx_msg void OnBnClickedButton0();
+	afx_msg void OnBnClickedButton1();
 };

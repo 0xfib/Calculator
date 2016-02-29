@@ -29,12 +29,15 @@ void CCalculatorDlg::DoDataExchange(CDataExchange* pDX)
 	CDialogEx::DoDataExchange(pDX);
 	DDX_Control(pDX, IDC_EDIT3, CSecondScreen);
 	DDX_Control(pDX, IDC_EDIT2, CFirstScreen);
+
+	CheckRadioButton(IDC_RADIO1, IDC_RADIO2, IDC_RADIO1);
 }
 
 BEGIN_MESSAGE_MAP(CCalculatorDlg, CDialogEx)
 	ON_WM_PAINT()
 	ON_WM_QUERYDRAGICON()
 	ON_BN_CLICKED(BUTTON0, &CCalculatorDlg::OnBnClickedButton0)
+	ON_BN_CLICKED(BUTTON1, &CCalculatorDlg::OnBnClickedButton1)
 END_MESSAGE_MAP()
 
 
@@ -103,4 +106,12 @@ void CCalculatorDlg::InsertScreen(CString in)
 void CCalculatorDlg::OnBnClickedButton0()
 {
 	InsertScreen(CString("0"));
+}
+
+
+
+
+void CCalculatorDlg::OnBnClickedButton1()
+{
+	InsertScreen(CString("1"));
 }
