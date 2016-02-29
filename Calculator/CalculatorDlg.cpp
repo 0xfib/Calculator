@@ -38,6 +38,14 @@ BEGIN_MESSAGE_MAP(CCalculatorDlg, CDialogEx)
 	ON_WM_QUERYDRAGICON()
 	ON_BN_CLICKED(BUTTON0, &CCalculatorDlg::OnBnClickedButton0)
 	ON_BN_CLICKED(BUTTON1, &CCalculatorDlg::OnBnClickedButton1)
+	ON_BN_CLICKED(BUTTON2, &CCalculatorDlg::OnBnClickedButton2)
+	ON_BN_CLICKED(BUTTON3, &CCalculatorDlg::OnBnClickedButton3)
+	ON_BN_CLICKED(BUTTON4, &CCalculatorDlg::OnBnClickedButton4)
+	ON_BN_CLICKED(BUTTON5, &CCalculatorDlg::OnBnClickedButton5)
+	ON_BN_CLICKED(BUTTON6, &CCalculatorDlg::OnBnClickedButton6)
+	ON_BN_CLICKED(BUTTON7, &CCalculatorDlg::OnBnClickedButton7)
+	ON_BN_CLICKED(BUTTON8, &CCalculatorDlg::OnBnClickedButton8)
+	ON_BN_CLICKED(BUTTON9, &CCalculatorDlg::OnBnClickedButton9)
 END_MESSAGE_MAP()
 
 
@@ -114,4 +122,52 @@ void CCalculatorDlg::OnBnClickedButton0()
 void CCalculatorDlg::OnBnClickedButton1()
 {
 	InsertScreen(CString("1"));
+}
+
+
+void CCalculatorDlg::OnBnClickedButton2()
+{
+	InsertScreen(CString("2"));
+}
+
+
+void CCalculatorDlg::OnBnClickedButton3()
+{
+	InsertScreen(CString("3"));
+}
+
+
+void CCalculatorDlg::OnBnClickedButton4()
+{
+	InsertScreen(CString("4"));
+}
+
+
+void CCalculatorDlg::OnBnClickedButton5()
+{
+	InsertScreen(CString("5"));
+}
+
+
+void CCalculatorDlg::OnBnClickedButton6()
+{
+	InsertScreen(CString("6"));
+}
+
+
+void CCalculatorDlg::OnBnClickedButton7()
+{
+	InsertScreen(CString("7"));
+}
+
+
+void CCalculatorDlg::OnBnClickedButton8()
+{
+	InsertScreen(CString("8"));
+}
+
+
+void CCalculatorDlg::OnBnClickedButton9()
+{
+	InsertScreen(CString("9"));
 }
