@@ -33,9 +33,14 @@ protected:
 	DECLARE_MESSAGE_MAP()
 public:
 	void InsertScreen(CString in);
+	int CMMDC(int a, int b);
+	int CMMMC(int a, int b);
 	CEdit CSecondScreen;
 	CEdit CFirstScreen;
 	int SelectedScreenNo;
+	CEdit* SelectedScreen();
+	BOOL PreTransalateMessage(MSG* msg);
+	void OnBackSlash();
 	afx_msg void OnBnClickedButton0();
 	afx_msg void OnBnClickedButton1();
 	afx_msg void OnBnClickedButton2();
@@ -48,4 +53,6 @@ public:
 	afx_msg void OnBnClickedButton9();
 	afx_msg void OnBnClickedRadio1();
 	afx_msg void OnBnClickedRadio2();
+	afx_msg void OnBnClickedDc();
+	afx_msg void OnBnClickedMmc();
 };
