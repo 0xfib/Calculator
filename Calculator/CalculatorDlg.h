@@ -4,6 +4,7 @@
 
 #pragma once
 #include "afxwin.h"
+#include "Rational.h"
 
 
 // CCalculatorDlg dialog
@@ -32,15 +33,23 @@ protected:
 	afx_msg HCURSOR OnQueryDragIcon();
 	DECLARE_MESSAGE_MAP()
 public:
-	void InsertScreen(CString in);
-	int CMMDC(int a, int b);
-	int CMMMC(int a, int b);
+	int SelectedScreenNo;
+	bool FirstScreenNewStart;
+	bool SecondScreenNewStart;
+	enum COpr{PLUS, MINUS, MULTI, DIV,EQ};
+	Rational CurrentRational;
 	CEdit CSecondScreen;
 	CEdit CFirstScreen;
-	int SelectedScreenNo;
+	CEdit CHistoryScreen;
+	CEdit COPERATOR;
 	CEdit* SelectedScreen();
-	BOOL PreTransalateMessage(MSG* msg);
+	BOOL PreTranslateMessage(MSG* msg);
+	void InsertScreen(CString in);
+	void SetOperator(CString opr);
+	int CMMDC(int a, int b);
+	int CMMMC(int a, int b);
 	void OnBackSlash();
+	void Debug();
 	afx_msg void OnBnClickedButton0();
 	afx_msg void OnBnClickedButton1();
 	afx_msg void OnBnClickedButton2();
@@ -55,4 +64,16 @@ public:
 	afx_msg void OnBnClickedRadio2();
 	afx_msg void OnBnClickedDc();
 	afx_msg void OnBnClickedMmc();
+	afx_msg void OnEnSetfocusEdit3();
+	afx_msg void OnEnSetfocusEdit2();
+	afx_msg void OnBnClickedP();
+	afx_msg void OnBnClickedMinus();
+	afx_msg void OnBnClickedButtonMulti();
+	afx_msg void OnBnClickedDiv();
+	afx_msg void OnBnClickedE();
+	afx_msg void OnBnClickedShift();
+	afx_msg void OnBnClickedX();
+	afx_msg void OnBnClickedPM();
+	afx_msg void OnBnClickedCe();
+	afx_msg void OnBnClickedC();
 };

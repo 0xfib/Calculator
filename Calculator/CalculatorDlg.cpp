@@ -18,7 +18,9 @@
 
 CCalculatorDlg::CCalculatorDlg(CWnd* pParent /*=NULL*/)
 	: CDialogEx(IDD_CALCULATOR_DIALOG, pParent),
-	SelectedScreenNo(1)
+	SelectedScreenNo(1),
+	FirstScreenNewStart(true),
+	SecondScreenNewStart(true)
 {
 	m_hIcon = AfxGetApp()->LoadIcon(IDR_MAINFRAME);
 }
@@ -30,6 +32,8 @@ void CCalculatorDlg::DoDataExchange(CDataExchange* pDX)
 	DDX_Control(pDX, IDC_EDIT2, CFirstScreen);
 
 	CheckRadioButton(IDC_RADIO1, IDC_RADIO2, IDC_RADIO1);
+	DDX_Control(pDX, IDC_EDIT_HISTORY, CHistoryScreen);
+	DDX_Control(pDX, IDC_EDIT_OPERATOR, COPERATOR);
 }
 
 BEGIN_MESSAGE_MAP(CCalculatorDlg, CDialogEx)
@@ -49,6 +53,18 @@ BEGIN_MESSAGE_MAP(CCalculatorDlg, CDialogEx)
 	ON_BN_CLICKED(IDC_RADIO2, &CCalculatorDlg::OnBnClickedRadio2)
 	ON_BN_CLICKED(BUTTON_DC, &CCalculatorDlg::OnBnClickedDc)
 	ON_BN_CLICKED(BUTTON_MMC, &CCalculatorDlg::OnBnClickedMmc)
+	ON_EN_SETFOCUS(IDC_EDIT3, &CCalculatorDlg::OnEnSetfocusEdit3)
+	ON_EN_SETFOCUS(IDC_EDIT2, &CCalculatorDlg::OnEnSetfocusEdit2)
+	ON_BN_CLICKED(BUTTON_P, &CCalculatorDlg::OnBnClickedP)
+	ON_BN_CLICKED(BUTTON_MINUS, &CCalculatorDlg::OnBnClickedMinus)
+	ON_BN_CLICKED(IDC_BUTTON_Multi, &CCalculatorDlg::OnBnClickedButtonMulti)
+	ON_BN_CLICKED(BUTTON_DIV, &CCalculatorDlg::OnBnClickedDiv)
+	ON_BN_CLICKED(BUTTON_E, &CCalculatorDlg::OnBnClickedE)
+	ON_BN_CLICKED(BUTTON_SHIFT, &CCalculatorDlg::OnBnClickedShift)
+	ON_BN_CLICKED(BUTTON_X, &CCalculatorDlg::OnBnClickedX)
+	ON_BN_CLICKED(BUTTON_P_M, &CCalculatorDlg::OnBnClickedPM)
+	ON_BN_CLICKED(BUTTON_CE, &CCalculatorDlg::OnBnClickedCe)
+	ON_BN_CLICKED(BUTTON_C, &CCalculatorDlg::OnBnClickedC)
 END_MESSAGE_MAP()
 
 
@@ -108,15 +124,58 @@ HCURSOR CCalculatorDlg::OnQueryDragIcon()
 	return static_cast<HCURSOR>(m_hIcon);
 }
 
-
-
 void CCalculatorDlg::InsertScreen(CString in)
 {
 	CString CurrentScreenText;
-	SelectedScreen()->GetWindowTextW(CurrentScreenText);
-	SelectedScreen()->SetWindowTextW(CurrentScreenText + in);
+	if (SelectedScreenNo == 1 && FirstScreenNewStart) {
+		SelectedScreen()->SetWindowTextW(in);
+		FirstScreenNewStart = FALSE;
+	}
+	else if (SelectedScreenNo == 2 && SecondScreenNewStart) {
+		SelectedScreen()->SetWindowTextW(in);
+		SecondScreenNewStart = FALSE;
+	}
+	else {
+		SelectedScreen()->GetWindowTextW(CurrentScreenText);
+		SelectedScreen()->SetWindowTextW(CurrentScreenText + in);
+	}
+}
 
+void CCalculatorDlg::SetOperator(CString opr)
+{
+	COPERATOR.SetWindowTextW(opr);
+	CString FirstScreenText;
+	CFirstScreen.GetWindowTextW(FirstScreenText);
+	CString SecondScreenText;
+	CSecondScreen.GetWindowTextW(SecondScreenText);
+	int t = _wtoi(FirstScreenText);
+	int b = _wtoi(SecondScreenText);
+
+	CString toString;
+
+	CString CurrentHistoryScreenText;
+	CHistoryScreen.GetWindowTextW(CurrentHistoryScreenText);
+
+	if (opr == '=') {
+		CHistoryScreen.SetWindowTextW(CurrentHistoryScreenText + Rational(t, b).toString() + _T(" "));
+		CurrentRational = CurrentRational + Rational(t, b);
+		toString.Format(TEXT("%d"), CurrentRational.getNumarator());
+		CFirstScreen.SetWindowTextW(toString);
+		toString.Format(TEXT("%d"), CurrentRational.getNumitor());
+		CSecondScreen.SetWindowTextW(toString);
+	}
+	else {
+		CurrentRational = Rational(t, b);
+	}
 	
+	CHistoryScreen.GetWindowTextW(CurrentHistoryScreenText);
+	if (opr == '=') 
+		CHistoryScreen.SetWindowTextW(CurrentHistoryScreenText + opr + _T(" ") + CurrentRational.toString());
+	else
+		CHistoryScreen.SetWindowTextW(CurrentHistoryScreenText + CurrentRational.toString() + opr + _T(" "));
+
+	FirstScreenNewStart = TRUE;
+	SecondScreenNewStart = TRUE;
 }
 
 int CCalculatorDlg::CMMDC(int a, int b)
@@ -148,22 +207,51 @@ CEdit* CCalculatorDlg::SelectedScreen()
 	}
 }
 
-BOOL CCalculatorDlg::PreTransalateMessage(MSG * msg)
-{
-	if (msg->message == WM_KEYDOWN && (msg->wParam >= '0' && msg->wParam <= '9'))
-	{
-		exit(0);
-	}
 
-	if (msg->message == WM_KEYDOWN && msg->wParam == 8) {
-		
+BOOL CCalculatorDlg::PreTranslateMessage(MSG * pMsg)
+{
+	if (pMsg->message == WM_KEYDOWN) {
+		if (pMsg->wParam >= VK_NUMPAD0 && pMsg->wParam <= VK_NUMPAD9) {
+
+		}
+		else if(pMsg->wParam >= 48 && pMsg->wParam <= 57) {
+			CString in((wchar_t)pMsg->wParam);
+			InsertScreen(in);
+			return true;
+		}
+		else if (pMsg->wParam == 32) {}
+		else if (pMsg->wParam == VK_BACK) OnBackSlash();
+		else if (pMsg->wParam == VK_SHIFT) Debug();
 	}
-	return CDialogEx::PreTranslateMessage(msg);
+	
+	return CDialog::PreTranslateMessage(pMsg);
 }
 
 void CCalculatorDlg::OnBackSlash()
 {
+	CString currentScreenText;
+	SelectedScreen()->GetWindowTextW(currentScreenText);
+	currentScreenText.Delete(currentScreenText.GetLength());
+	if (currentScreenText.GetLength() == 1) {
+		if (SelectedScreenNo == 1){
+			SelectedScreen()->SetWindowTextW(CString(_T("0")));
+			FirstScreenNewStart = TRUE;
+		} else {
+			SelectedScreen()->SetWindowTextW(CString(_T("1")));
+			SecondScreenNewStart = TRUE;
+		}
+	}
+	else if (!currentScreenText.IsEmpty()) {
+		currentScreenText.Delete(currentScreenText.GetLength() - 1);
+		SelectedScreen()->SetWindowTextW(currentScreenText);
+	}
+}
 
+void CCalculatorDlg::Debug()
+{
+	Rational tr = Rational(0, 1);
+	CString string = _T("test");
+	AfxMessageBox(tr.toString());
 }
 
 void CCalculatorDlg::OnBnClickedButton0()
@@ -244,11 +332,126 @@ void CCalculatorDlg::OnBnClickedDc()
 	CFirstScreen.GetWindowTextW(FirstScreenText);
 	CString SecondScreenText;
 	CSecondScreen.GetWindowTextW(SecondScreenText);
-	int cmmdc = CMMDC(_wtoi(FirstScreenText), _wtoi(SecondScreenText));
+	int re = CMMDC(_wtoi(FirstScreenText), _wtoi(SecondScreenText));
+
+	CString CurrentScreenText = _T("");
+	CString reString;
+	reString.Format(TEXT("%d"), re);
+	CHistoryScreen.SetWindowTextW(CurrentScreenText + reString);
 }
 
 
 void CCalculatorDlg::OnBnClickedMmc()
 {
-	
+	CString FirstScreenText;
+	CFirstScreen.GetWindowTextW(FirstScreenText);
+	CString SecondScreenText;
+	CSecondScreen.GetWindowTextW(SecondScreenText);
+	int re = CMMMC(_wtoi(FirstScreenText), _wtoi(SecondScreenText));
+
+	CString CurrentScreenText=_T("");
+	CString reString;
+	reString.Format(TEXT("%d"), re);
+	CHistoryScreen.SetWindowTextW(CurrentScreenText + reString);
+}
+
+void CCalculatorDlg::OnEnSetfocusEdit3()
+{
+	CheckRadioButton(IDC_RADIO1, IDC_RADIO2, IDC_RADIO2);
+	SelectedScreenNo = 2;
+}
+
+
+void CCalculatorDlg::OnEnSetfocusEdit2()
+{
+	CheckRadioButton(IDC_RADIO1, IDC_RADIO2, IDC_RADIO1);
+	SelectedScreenNo = 1;
+}
+
+
+void CCalculatorDlg::OnBnClickedP()
+{
+	SetOperator(CString(_T("+")));
+}
+
+
+void CCalculatorDlg::OnBnClickedMinus()
+{
+	SetOperator(CString(_T("-")));
+}
+
+
+void CCalculatorDlg::OnBnClickedButtonMulti()
+{
+	SetOperator(CString(_T("*")));
+}
+
+
+void CCalculatorDlg::OnBnClickedDiv()
+{
+	SetOperator(CString(_T("/")));
+}
+
+
+void CCalculatorDlg::OnBnClickedE()
+{
+	SetOperator(CString(_T("=")));
+}
+
+
+void CCalculatorDlg::OnBnClickedShift()
+{
+	OnBackSlash();
+}
+
+
+void CCalculatorDlg::OnBnClickedX()
+{
+	CString FirstScreenText;
+	CString SecondScreenText;
+
+	CFirstScreen.GetWindowTextW(FirstScreenText);
+	CSecondScreen.GetWindowTextW(SecondScreenText);
+	CFirstScreen.SetWindowTextW(SecondScreenText);
+	if (FirstScreenText == "0") FirstScreenText = _T("1");
+	CSecondScreen.SetWindowTextW(FirstScreenText);
+}
+
+
+void CCalculatorDlg::OnBnClickedPM()
+{
+	CString currentScreenText;
+	SelectedScreen()->GetWindowTextW(currentScreenText);
+	int conv = _wtoi(currentScreenText);
+	CString reString;
+	reString.Format(TEXT("%d"), -conv);
+	SelectedScreen()->SetWindowTextW(reString);
+}
+
+
+void CCalculatorDlg::OnBnClickedCe()
+{
+	CString clearScreen;
+	clearScreen = _T("0");
+	CFirstScreen.SetWindowTextW(clearScreen);
+	clearScreen = _T("1");
+	CSecondScreen.SetWindowTextW(clearScreen);
+	FirstScreenNewStart = TRUE;
+	SecondScreenNewStart = TRUE;
+}
+
+
+void CCalculatorDlg::OnBnClickedC()
+{
+	CString clearScreen;
+	clearScreen = _T("0");
+	CFirstScreen.SetWindowTextW(clearScreen);
+	clearScreen = _T("1");
+	CSecondScreen.SetWindowTextW(clearScreen);
+	clearScreen = _T("");
+	CHistoryScreen.SetWindowTextW(clearScreen);
+	COPERATOR.SetWindowTextW(clearScreen);
+	FirstScreenNewStart = TRUE;
+	SecondScreenNewStart = TRUE;
+
 }
