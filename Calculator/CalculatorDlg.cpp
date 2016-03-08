@@ -480,6 +480,8 @@ void CCalculatorDlg::OnBnClickedMc()
 
 void CCalculatorDlg::OnBnClickedMp()
 {
+	FirstScreenNewStart = TRUE;
+	SecondScreenNewStart = TRUE;
 	CString FirstScreenText;
 	CString SecondScreenText;
 	CFirstScreen.GetWindowTextW(FirstScreenText);
