@@ -36,7 +36,7 @@ public:
 	int SelectedScreenNo;
 	bool FirstScreenNewStart;
 	bool SecondScreenNewStart;
-	enum COpr{PLUS, MINUS, MULTI, DIV,EQ};
+	Rational MemRational;
 	Rational CurrentRational;
 	CEdit CSecondScreen;
 	CEdit CFirstScreen;
@@ -76,4 +76,8 @@ public:
 	afx_msg void OnBnClickedPM();
 	afx_msg void OnBnClickedCe();
 	afx_msg void OnBnClickedC();
+	afx_msg void OnBnClickedMc();
+	afx_msg void OnBnClickedMp();
+	afx_msg void OnBnClickedMr();
+	afx_msg void OnBnClickedMm();
 };

@@ -23,6 +23,7 @@ CCalculatorDlg::CCalculatorDlg(CWnd* pParent /*=NULL*/)
 	SecondScreenNewStart(true)
 {
 	m_hIcon = AfxGetApp()->LoadIcon(IDR_MAINFRAME);
+	MemRational = Rational(0, 1);
 }
 
 void CCalculatorDlg::DoDataExchange(CDataExchange* pDX)
@@ -65,6 +66,10 @@ BEGIN_MESSAGE_MAP(CCalculatorDlg, CDialogEx)
 	ON_BN_CLICKED(BUTTON_P_M, &CCalculatorDlg::OnBnClickedPM)
 	ON_BN_CLICKED(BUTTON_CE, &CCalculatorDlg::OnBnClickedCe)
 	ON_BN_CLICKED(BUTTON_C, &CCalculatorDlg::OnBnClickedC)
+	ON_BN_CLICKED(BUTTON_MC, &CCalculatorDlg::OnBnClickedMc)
+	ON_BN_CLICKED(BUTTON_MP, &CCalculatorDlg::OnBnClickedMp)
+	ON_BN_CLICKED(BUTTON_MR, &CCalculatorDlg::OnBnClickedMr)
+	ON_BN_CLICKED(BUTTON_MM, &CCalculatorDlg::OnBnClickedMm)
 END_MESSAGE_MAP()
 
 
@@ -143,7 +148,6 @@ void CCalculatorDlg::InsertScreen(CString in)
 
 void CCalculatorDlg::SetOperator(CString opr)
 {
-	COPERATOR.SetWindowTextW(opr);
 	CString FirstScreenText;
 	CFirstScreen.GetWindowTextW(FirstScreenText);
 	CString SecondScreenText;
@@ -158,7 +162,17 @@ void CCalculatorDlg::SetOperator(CString opr)
 
 	if (opr == '=') {
 		CHistoryScreen.SetWindowTextW(CurrentHistoryScreenText + Rational(t, b).toString() + _T(" "));
-		CurrentRational = CurrentRational + Rational(t, b);
+		CString CurrentOperator;
+		COPERATOR.GetWindowTextW(CurrentOperator);
+		if(CurrentOperator == '+')
+			CurrentRational = CurrentRational + Rational(t, b);
+		else if (CurrentOperator == '-')
+			CurrentRational = CurrentRational - Rational(t, b);
+		else if (CurrentOperator == '*')
+			CurrentRational = CurrentRational * Rational(t, b);
+		else if (CurrentOperator == '/')
+			CurrentRational = CurrentRational / Rational(t, b);
+
 		toString.Format(TEXT("%d"), CurrentRational.getNumarator());
 		CFirstScreen.SetWindowTextW(toString);
 		toString.Format(TEXT("%d"), CurrentRational.getNumitor());
@@ -176,6 +190,7 @@ void CCalculatorDlg::SetOperator(CString opr)
 
 	FirstScreenNewStart = TRUE;
 	SecondScreenNewStart = TRUE;
+	COPERATOR.SetWindowTextW(opr);
 }
 
 int CCalculatorDlg::CMMDC(int a, int b)
@@ -454,4 +469,41 @@ void CCalculatorDlg::OnBnClickedC()
 	FirstScreenNewStart = TRUE;
 	SecondScreenNewStart = TRUE;
 
+}
+
+
+void CCalculatorDlg::OnBnClickedMc()
+{
+	MemRational = Rational(0, 1);
+}
+
+
+void CCalculatorDlg::OnBnClickedMp()
+{
+	CString FirstScreenText;
+	CString SecondScreenText;
+	CFirstScreen.GetWindowTextW(FirstScreenText);
+	CSecondScreen.GetWindowTextW(SecondScreenText);
+	MemRational = MemRational + Rational(_wtoi(FirstScreenText), _wtoi(SecondScreenText));
+}
+
+
+void CCalculatorDlg::OnBnClickedMr()
+{
+	CString FirstScreenText;
+	FirstScreenText.Format(TEXT("%d"), MemRational.getNumarator());
+	CString SecondScreenText;
+	SecondScreenText.Format(TEXT("%d"), MemRational.getNumitor());
+	CFirstScreen.SetWindowTextW(FirstScreenText);
+	CSecondScreen.SetWindowTextW(SecondScreenText);
+}
+
+
+void CCalculatorDlg::OnBnClickedMm()
+{
+	CString FirstScreenText;
+	CString SecondScreenText;
+	CFirstScreen.GetWindowTextW(FirstScreenText);
+	CSecondScreen.GetWindowTextW(SecondScreenText);
+	MemRational = MemRational - Rational(_wtoi(FirstScreenText), _wtoi(SecondScreenText));
 }
